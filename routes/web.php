@@ -1,16 +1,201 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ManagementUserController;
+use App\Http\Controllers\Frontend\HomeController as FrontendHomeController;
+use App\Http\Controllers\Backend\DashboardController;
 
+// ✅ IMPORT CONTROLLER AUTH - WAJIB ADA SEMUA
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\Auth\ConfirmPasswordController;
+
+// Home Controller untuk member area
+use App\Http\Controllers\HomeController;
+// Pengalaman Kerja Controller
+use App\Http\Controllers\Backend\PengalamanKerjaController;
+// Pendidikan Controller
+use App\Http\Controllers\Backend\PendidikanController;
+
+// =================================================================
+// ACARA 3 - Routing Dasar
+// =================================================================
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/hello', function () {
+    return 'Hello World';
+});
+
+Route::get('user/nama/{name?}', function ($name = 'John') {
+    return $name;
+});
+
+Route::get('user/{id}', function ($id) {
+    return 'User '.$id;
+})->where('id', '[0-9]+');
+
+Route::get('posts/{post}/comments/{comment}', function ($postId, $commentId) {
+    return "Post ID: $postId, Comment ID: $commentId";
+});
+
+Route::get('nama/{name?}', function ($name = null) {
+    return $name;
+});
+
+Route::redirect('/here', '/there');
+
+Route::get('/there', function () {
+    return 'Halaman Tujuan Redirect';
+});
+
+Route::view('/welcome_laravel', 'welcome');
+
+Route::get('user/profile/{name}', function ($name) {
+    return "Profil Nama: $name";
+})->where('name', '[A-Za-z]+');
+
+Route::get('user/id/{id}', function ($id) {
+    return "User ID: $id";
+})->where('id', '[0-9]+');
+
+// =================================================================
+// ACARA 5 - Resource Controller
+// =================================================================
+Route::resource('management-user', ManagementUserController::class);
+
+// =================================================================
+// ACARA 6 - Custom Route
+// =================================================================
+Route::get('/user', [ManagementUserController::class, 'indexMahasiswa'])
+    ->name('user.index');
+
+// =================================================================
+// ACARA 7 - Frontend Home
+// =================================================================
+Route::get('/home-frontend', [FrontendHomeController::class, 'index'])
+    ->name('home.frontend');
+
+// =================================================================
+// ACARA 8 - Backend Dashboard (Admin)
+// =================================================================
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->name('dashboard.index')
+    ->middleware('auth');
+
+// =================================================================
+// ACARA 13 - CRUD Pengalaman Kerja
+// =================================================================
+Route::resource('pengalaman_kerja', PengalamanKerjaController::class)->middleware('auth');
+
+// =================================================================
+//ACARA 15 - Pendidikan CRUD
+Route::resource('pendidikan', PendidikanController::class);
+    
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+Auth::routes();
+
+// --- LOGIN ---
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [LoginController::class, 'login']);
+
+// --- LOGOUT ---
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+// --- REGISTER ---
+Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('register', [RegisterController::class, 'register']);
+
+// --- PASSWORD RESET ---
+Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+// --- EMAIL VERIFICATION ---
+Route::get('email/verify', [VerificationController::class, 'show'])->name('verification.notice');
+Route::get('email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
+Route::post('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
+
+// --- PASSWORD CONFIRMATION ---
+Route::get('password/confirm', [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.confirm');
+Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm']);
+
+
+// =================================================================
+// ACARA 11 - Member Area
+// =================================================================
+Route::get('/member-area', [HomeController::class, 'index'])
+    ->name('home')  // Name 'home' agar redirect login berfungsi
+    ->middleware('auth');
+// =================================================================
+// FALLBACK ROUTE (404)
+// =================================================================
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});
+
+//acara12
+// --- 1. Test CheckAge Middleware ---
+Route::get('/profile', function () {
+    return view('profile', ['message' => 'Selamat datang di Profile!']);
+})->middleware('check.age');
+
+// Route redirect untuk CheckAge (jika age <= 200)
+Route::get('/home', function () {
+    return 'Halaman Home - Akses Ditolak!';
+})->name('home.redirect');  
+
+// --- 2. Test Before & After Middleware ---
+Route::get('/test-middleware', function () {
+    return '<div style="background: lightblue; padding: 20px; margin: 10px;">
+            [CONTROLLER] Halaman ini diproses oleh controller
+            </div>';
+})->middleware(['before', 'after']);
+
+// --- 3. Test CheckRole Middleware (Individual) ---
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
+})->middleware(['auth', 'role:admin']);
+
+Route::get('/user/profile', function () {
+    return view('user.profile');
+})->middleware(['auth', 'role:user']);
+
+Route::get('/moderator/panel', function () {
+    return 'Moderator Panel';
+})->middleware(['auth', 'role:moderator']);
+
+// --- 4. Test Middleware Groups ---
+
+// Group 'admin'
+Route::middleware('admin')->group(function () {
+    Route::get('/admin/users', function () {
+        return view('admin.users');
+    })->name('admin.users');
+    
+    Route::get('/admin/settings', function () {
+        return view('admin.settings');
+    })->name('admin.settings');
+});
+
+// Group 'user'
+Route::middleware('user')->group(function () {
+    Route::get('/user/dashboard', function () {
+        return view('user.dashboard');
+    })->name('user.dashboard');
+    
+    Route::get('/user/settings', function () {
+        return view('user.settings');
+    })->name('user.settings');
+});
+
+// --- 5. Test Log Request Middleware ---
+Route::get('/logged-page', function () {
+    return 'Halaman ini akan di-log setelah response dikirim';
+})->middleware('log.request');
