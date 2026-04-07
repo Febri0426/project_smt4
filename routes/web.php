@@ -24,7 +24,8 @@ use App\Http\Controllers\Backend\PendidikanController;
 use App\Http\Controllers\SessionController;
 // Pegawai Controller
 use App\Http\Controllers\PegawaiController;
-
+// Coba Controller
+use App\Http\Controllers\CobaController;
 
 // =================================================================
 // ACARA 3 - Routing Dasar
@@ -153,6 +154,10 @@ Route::get('/session/delete', [SessionController::class, 'delete']);
 Route::get('/pegawai/{nama}', [PegawaiController::class, 'index']);
 Route::get('/formulir', [PegawaiController::class, 'formulir'])->name('formulir.index');
 Route::post('/formulir/proses', [PegawaiController::class, 'proses'])->name('formulir.proses');
+
+// Route untuk testing error handling dengan segment
+Route::get('/cobaerror/{segment?}', [CobaController::class, 'index']);
+
 // =================================================================
 // FALLBACK ROUTE (404)
 // =================================================================
