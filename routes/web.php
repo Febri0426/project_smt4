@@ -20,6 +20,11 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Backend\PengalamanKerjaController;
 // Pendidikan Controller
 use App\Http\Controllers\Backend\PendidikanController;
+// Session Routes
+use App\Http\Controllers\SessionController;
+// Pegawai Controller
+use App\Http\Controllers\PegawaiController;
+
 
 // =================================================================
 // ACARA 3 - Routing Dasar
@@ -133,11 +138,38 @@ Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm']);
 Route::get('/member-area', [HomeController::class, 'index'])
     ->name('home')  // Name 'home' agar redirect login berfungsi
     ->middleware('auth');
+
+// =================================================================
+// ACARA 17 - Session dan Request
+// =================================================================
+
+Route::get('/session/create', [SessionController::class, 'create']);
+Route::get('/session/show', [SessionController::class, 'show']);
+Route::get('/session/delete', [SessionController::class, 'delete']);
+
+// =================================================================
+// - Pegawai Route (acara 17,18)
+// =================================================================
+Route::get('/pegawai/{nama}', [PegawaiController::class, 'index']);
+Route::get('/formulir', [PegawaiController::class, 'formulir'])->name('formulir.index');
+Route::post('/formulir/proses', [PegawaiController::class, 'proses'])->name('formulir.proses');
 // =================================================================
 // FALLBACK ROUTE (404)
 // =================================================================
 Route::fallback(function () {
     return response()->view('errors.404', [], 404);
+});
+
+// 🔹 Route untuk testing error handling
+Route::get('/test-error/{kode?}', function($kode = null) {
+    if ($kode == '404') {
+        abort(404, 'Halaman tidak ditemukan');
+    } elseif ($kode == '403') {
+        abort(403, 'Akses ditolak');
+    } elseif ($kode == '500') {
+        abort(500, 'Terjadi kesalahan server');
+    }
+    return 'Tidak ada error - silakan coba /test-error/404';
 });
 
 //acara12
