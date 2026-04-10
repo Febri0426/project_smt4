@@ -6,7 +6,7 @@ use App\Http\Controllers\ManagementUserController;
 use App\Http\Controllers\Frontend\HomeController as FrontendHomeController;
 use App\Http\Controllers\Backend\DashboardController;
 
-// ✅ IMPORT CONTROLLER AUTH - WAJIB ADA SEMUA
+// IMPORT CONTROLLER AUTH - WAJIB ADA SEMUA
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -165,15 +165,15 @@ Route::post('/formulir/proses', [PegawaiController::class, 'proses'])->name('for
 Route::get('/cobaerror/{segment?}', [CobaController::class, 'index']);
 
 // =================================================================
-// ACARA 19 - Upload File (jika diperlukan)
+// ACARA 19 - Upload File 
 // =================================================================
 Route::get('/upload', [UploadController::class, 'index'])->name('upload');
 Route::post('/upload/proses', [UploadController::class, 'upload'])->name('upload.proses');
 Route::post('/upload/resize', [UploadController::class, 'upload_resize'])->name('upload.resize');
-// ACARA 20 - Route untuk testing upload dengan Dropzone (jika diperlukan)
+// ACARA 20 - Route untuk testing upload dengan Dropzone 
 Route::get('/dropzone', [DropzoneController::class, 'dropzone']);
 Route::post('/dropzone/store', [DropzoneController::class, 'dropzone_store'])->name('dropzone.store');
-// ACARA 20 - Route untuk testing upload PDF (jika diperlukan)
+// ACARA 20 - Route untuk testing upload PDF 
 Route::get('/pdf/upload', [PdfUploadController::class, 'pdf_upload']);
 Route::post('/pdf/store', [PdfUploadController::class, 'pdf_store'])->name('pdf.store');
 
@@ -185,7 +185,7 @@ Route::fallback(function () {
     return response()->view('errors.404', [], 404);
 });
 
-// 🔹 Route untuk testing error handling
+// Route untuk testing error handling
 Route::get('/test-error/{kode?}', function($kode = null) {
     if ($kode == '404') {
         abort(404, 'Halaman tidak ditemukan');

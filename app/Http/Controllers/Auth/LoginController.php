@@ -17,8 +17,8 @@ class LoginController extends Controller
      *
      * @var string
      */
-    // ✅ UBAH: Redirect ke member-area, bukan home default
-    protected $redirectTo = '/member-area';
+    // UBAH: Redirect ke member-area, bukan home default
+    protected $redirectTo = '/pengalaman_kerja';
 
     /**
      * Create a new controller instance.
@@ -27,7 +27,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        // ✅ Aktifkan middleware guest untuk halaman login/register
+        // Aktifkan middleware guest untuk halaman login/register
         $this->middleware('guest')->except('logout');
     }
 
@@ -59,8 +59,8 @@ class LoginController extends Controller
             // Regenerate session untuk keamanan
             $request->session()->regenerate();
             
-            // Redirect ke route 'home' (yang sudah kita arahkan ke /member-area)
-            return redirect()->intended(route('home'));
+            // Redirect ke intended page atau default ke member-area
+            return redirect()->intended('/pengalaman_kerja');
         }
 
         // 5. Jika gagal, kembali ke login dengan error
