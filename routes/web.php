@@ -26,6 +26,12 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\PegawaiController;
 // Coba Controller
 use App\Http\Controllers\CobaController;
+// Upload Controller (jika diperlukan untuk acara upload file)
+use App\Http\Controllers\UploadController;
+// Dropzone Controller (jika diperlukan untuk acara upload file dengan Dropzone)
+use App\Http\Controllers\DropzoneController;
+// PDF Upload Controller (jika diperlukan untuk acara upload file PDF)
+use App\Http\Controllers\PdfUploadController;
 
 // =================================================================
 // ACARA 3 - Routing Dasar
@@ -155,8 +161,22 @@ Route::get('/pegawai/{nama}', [PegawaiController::class, 'index']);
 Route::get('/formulir', [PegawaiController::class, 'formulir'])->name('formulir.index');
 Route::post('/formulir/proses', [PegawaiController::class, 'proses'])->name('formulir.proses');
 
-// Route untuk testing error handling dengan segment
+// Route untuk testing error handling dengan segment (acara 18)
 Route::get('/cobaerror/{segment?}', [CobaController::class, 'index']);
+
+// =================================================================
+// ACARA 19 - Upload File (jika diperlukan)
+// =================================================================
+Route::get('/upload', [UploadController::class, 'index'])->name('upload');
+Route::post('/upload/proses', [UploadController::class, 'upload'])->name('upload.proses');
+Route::post('/upload/resize', [UploadController::class, 'upload_resize'])->name('upload.resize');
+// ACARA 20 - Route untuk testing upload dengan Dropzone (jika diperlukan)
+Route::get('/dropzone', [DropzoneController::class, 'dropzone']);
+Route::post('/dropzone/store', [DropzoneController::class, 'dropzone_store'])->name('dropzone.store');
+// ACARA 20 - Route untuk testing upload PDF (jika diperlukan)
+Route::get('/pdf/upload', [PdfUploadController::class, 'pdf_upload']);
+Route::post('/pdf/store', [PdfUploadController::class, 'pdf_store'])->name('pdf.store');
+
 
 // =================================================================
 // FALLBACK ROUTE (404)
