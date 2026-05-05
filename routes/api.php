@@ -8,9 +8,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// Route untuk API Pendidikan
-Route::get('/api_pendidikan', [ApiPendidikanController::class, 'index']);
-Route::post('/api_pendidikan', [ApiPendidikanController::class, 'createPen']);
-Route::get('/api_pendidikan/{id}', [ApiPendidikanController::class, 'getPen']);
-Route::put('/api_pendidikan/{id}', [ApiPendidikanController::class, 'updatePen']);
-Route::delete('/api_pendidikan/{id}', [ApiPendidikanController::class, 'deletePen']);
+// Pendidikan API Routes
+Route::prefix('api_pendidikan')->group(function () {
+    Route::get('/', [ApiPendidikanController::class, 'index']);
+    Route::post('/', [ApiPendidikanController::class, 'createPen']);
+    Route::get('/{id}', [ApiPendidikanController::class, 'show']);
+    Route::put('/{id}', [ApiPendidikanController::class, 'updatePen']);
+    Route::delete('/{id}', [ApiPendidikanController::class, 'deletePen']);
+});

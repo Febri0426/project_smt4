@@ -8,16 +8,23 @@ use Illuminate\Http\Response;
 
 class ApiPendidikanController extends Controller
 {
+    /**
+     * GET: Menampilkan semua data pendidikan
+     */
     public function index()
     {
+        $pendidikan = Pendidikan::all();
+        
         return response()->json([
             'success' => true,
-            'message' => 'API Pendidikan berhasil diakses'
+            'data' => $pendidikan
         ], 200);
     }
-    
-    // Fungsi untuk mendapatkan data berdasarkan ID (GET)
-    public function getPen($id)
+
+    /**
+     * GET: Menampilkan data berdasarkan ID
+     */
+    public function show($id)
     {
         $pendidikan = Pendidikan::find($id);
         
@@ -28,22 +35,40 @@ class ApiPendidikanController extends Controller
             ], 404);
         }
         
-        return Response::json($pendidikan, 200);
+        return response()->json([
+            'success' => true,
+            'data' => $pendidikan
+        ], 200);
     }
-    
-    // Fungsi untuk membuat data baru (POST)
+
+    /**
+     * POST: Menyimpan data baru
+     */
     public function createPen(Request $request)
     {
+        // 1. Validasi data input
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'tingkat' => 'required|string|max:50',
+            'tahun_masuk' => 'required|integer|digits:4',
+            'tahun_keluar' => 'required|integer|digits:4',
+        ]);
+
+        // 2. Simpan data ke database
+        // Gunakan $request->all() hanya jika $fillable di Model sudah benar
         $pendidikan = Pendidikan::create($request->all());
-        
+
         return response()->json([
-            'status' => 'ok',
-            'message' => 'Pendidikan berhasil ditambahkan!'
+            'success' => true,
+            'message' => 'Data pendidikan berhasil ditambahkan',
+            'data' => $pendidikan
         ], 201);
     }
-    
-    // Fungsi untuk update data (PUT)
-    public function updatePen($id, Request $request)
+
+    /**
+     * PUT/PATCH: Mengupdate data
+     */
+    public function updatePen(Request $request, $id)
     {
         $pendidikan = Pendidikan::find($id);
         
@@ -53,16 +78,20 @@ class ApiPendidikanController extends Controller
                 'message' => 'Data Pendidikan tidak ditemukan'
             ], 404);
         }
-        
+
+        // Update data
         $pendidikan->update($request->all());
-        
+
         return response()->json([
             'success' => true,
-            'message' => 'Pendidikan berhasil diubah!'
+            'message' => 'Data pendidikan berhasil diubah',
+            'data' => $pendidikan
         ], 200);
     }
-    
-    // Fungsi untuk menghapus data (DELETE)
+
+    /**
+     * DELETE: Menghapus data
+     */
     public function deletePen($id)
     {
         $pendidikan = Pendidikan::find($id);
@@ -73,21 +102,12 @@ class ApiPendidikanController extends Controller
                 'message' => 'Data Pendidikan tidak ditemukan'
             ], 404);
         }
-        
+
         $pendidikan->delete();
-        
+
         return response()->json([
             'success' => true,
-            'message' => 'Pendidikan berhasil dihapus!'
+            'message' => 'Data pendidikan berhasil dihapus'
         ], 200);
-    }
-    
-    // Fungsi store yang sudah ada (bisa tetap digunakan)
-    public function store(Request $request)
-    {
-        return response()->json([
-            'success' => true,
-            'message' => 'Data berhasil ditambahkan'
-        ], 201);
     }
 }

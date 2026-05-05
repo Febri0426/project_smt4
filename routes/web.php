@@ -32,6 +32,8 @@ use App\Http\Controllers\UploadController;
 use App\Http\Controllers\DropzoneController;
 // PDF Upload Controller (jika diperlukan untuk acara upload file PDF)
 use App\Http\Controllers\PdfUploadController;
+// API Pendidikan Controller
+use App\Http\Controllers\ApiPendidikanController;
 
 // =================================================================
 // ACARA 3 - Routing Dasar
@@ -176,6 +178,14 @@ Route::post('/dropzone/store', [DropzoneController::class, 'dropzone_store'])->n
 // ACARA 20 - Route untuk testing upload PDF 
 Route::get('/pdf/upload', [PdfUploadController::class, 'pdf_upload']);
 Route::post('/pdf/store', [PdfUploadController::class, 'pdf_store'])->name('pdf.store');
+
+// =================================================================
+// API ROUTES - Pendidikan 
+// =================================================================
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
 
 
 // =================================================================
